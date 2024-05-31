@@ -10,7 +10,15 @@ export interface InitialData {
 }
 
 export const LoginForm = () => {
-  const { register, control, handleSubmit } = useForm<InitialData>();
+  const { register, control, handleSubmit, formState } = useForm<InitialData>({
+    defaultValues: {
+      username: 'Vlad',
+      email: '',
+      surname: '',
+    },
+  });
+
+  const { errors } = formState;
 
   const onSubmit = (data: InitialData) => {
     console.log('Submited form', data);
@@ -26,7 +34,7 @@ export const LoginForm = () => {
         <LoginInput
           title="Username"
           type="text"
-          errorMessage="Error Username"
+          errorMessage={errors.username?.message || ''}
           {...register('username', {
             required: {
               value: true,
@@ -38,12 +46,25 @@ export const LoginForm = () => {
         <LoginInput
           title="Email"
           type="email"
-          errorMessage="Error Email"
+          errorMessage={errors.email?.message || ''}
           {...register('email', {
             required: 'Email is required',
             pattern: {
               value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
               message: 'Invalid email address',
+            },
+            validate: {
+              notAdmin: fieldValue => {
+                return (
+                  fieldValue !== 'admin@gmail.com' || 'Enter a different value'
+                );
+              },
+              notBlackListed: fieldValue => {
+                return (
+                  !fieldValue.endsWith('baddomain.com') ||
+                  'This domain is not supported'
+                );
+              },
             },
           })}
         />
@@ -51,9 +72,12 @@ export const LoginForm = () => {
         <LoginInput
           title="Surname"
           type="text"
-          errorMessage="Error Surname"
+          errorMessage={errors.surname?.message || ''}
           {...register('surname', {
-            required: 'Surname is required',
+            required: {
+              value: true,
+              message: 'Surname is required',
+            },
           })}
         />
       </div>
