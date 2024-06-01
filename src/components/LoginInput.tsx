@@ -3,12 +3,11 @@ import { twMerge } from 'tailwind-merge';
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   title: string;
-  type: string;
   errorMessage: string;
 }
 
 export const LoginInput = forwardRef<HTMLInputElement, Props>(
-  ({ title, type, errorMessage, ...rest }, ref) => {
+  ({ title, errorMessage, ...rest }, ref) => {
     return (
       <div className="flex flex-col gap-2">
         <label
